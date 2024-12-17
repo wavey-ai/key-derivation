@@ -1,4 +1,4 @@
-use key_deriver::KeyDerivation;
+use key_derivation::KeyDerivation;
 
 fn main() -> Result<(), &'static str> {
     let kdf = KeyDerivation::new();
@@ -13,6 +13,8 @@ fn main() -> Result<(), &'static str> {
 
     // Derive key using the retrieved salt
     let key = KeyDerivation::derive_key(passphrase, &retrieved_salt)?;
+    let key_number = KeyDerivation::key_to_number(&key);
+    println!("Key as number: {}", key_number);
 
     println!("Derived key: {:x?}", key);
     Ok(())

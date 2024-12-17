@@ -1,4 +1,6 @@
 use argon2::{password_hash::PasswordHasher, Argon2, Params};
+use num_bigint::BigUint;
+use num_traits::FromBytes;
 use rand::rngs::OsRng;
 use rand::RngCore;
 
@@ -28,6 +30,21 @@ impl KeyDerivation {
             return Err("Failed to derive key using Argon2");
         }
 
+        Ok(key)
+    }
+
+    pub fn key_to_number(key: &[u8; 32]) -> BigUint {
+        BigUint::from_bytes_be(key)
+    }
+
+    pub fn key_from_number(num: BigUint) -> Result<[u8; 32], &'static str> {
+        let bytes = num.to_bytes_be();
+        if bytes.len() != 32 {
+            return Err("Failed to derive key using Argon2");
+        }
+
+        let mut key = [0u8; 32];
+        key.copy_from_slice(&bytes);
         Ok(key)
     }
 
