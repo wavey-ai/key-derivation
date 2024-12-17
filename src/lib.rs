@@ -33,14 +33,19 @@ impl KeyDerivation {
         Ok(key)
     }
 
-    pub fn key_to_number(key: &[u8; 32]) -> BigUint {
-        BigUint::from_bytes_be(key)
+    pub fn key_to_string(key: &[u8; 32]) -> String {
+        let num = BigUint::from_bytes_be(key);
+        num.to_string()
     }
 
-    pub fn key_from_number(num: BigUint) -> Result<[u8; 32], &'static str> {
+    pub fn key_from_string(encoded: &str) -> Result<[u8; 32], &'static str> {
+        let num = encoded
+            .parse::<BigUint>()
+            .map_err(|_| "Invalid key string format")?;
+
         let bytes = num.to_bytes_be();
         if bytes.len() != 32 {
-            return Err("Failed to derive key using Argon2");
+            return Err("Invalid key length");
         }
 
         let mut key = [0u8; 32];
